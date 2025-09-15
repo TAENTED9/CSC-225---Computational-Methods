@@ -1,25 +1,30 @@
-from sympy import symbols, lambdify
+from sympy import symbols, lambdify, sympify
+from sympy.parsing.sympy_parser import * 
 
+# Define symbols for x and y
+x, y = symbols('x y')
 
-x = symbols('x')
-y = symbols('y')
-y0 = eval(input("\nEnter the initial value y0: "))
-x0 = eval(input("Enter the initial value x0: "))
+# Get initial values and parameters from user
+x0 = float(input("Enter the initial value x0: "))
+y0 = float(input("Enter the initial value y0: "))
 h = float(input("Enter the step size h: "))
-y_prime = eval(input("Enter the function y' as a function of x and y: "))
-ni = 0
-i = 0
-nf = int(input("Enter the number of steps n: "))
-xt = eval(input("Enter the target x value xt: \n"))
+deriv_str = input("Enter the function y' as a function of x and y (e.g., x + y): ")
+f = parse_expr(deriv_str, transformations = (standard_transformations + (implicit_multiplication_application,)), local_dict={"cos": cos, "sin": sin, "exp": exp, "log": log, "sqrt": sqrt} )
+y_prime = sympify(deriv_str)
+n_steps = int(input("Enter the number of steps n: "))
+target_x = float(input("Enter the target x value xt: "))
 
+# Prepare the function for y'
+y_prime_func = lambdify((x, y), y_prime)
+
+# Print table header
+print("   Step |     x      |     y     ")
+print("---------------------------------")
 
 # Euler's Method Implementation
-print("     n   |      Xn     |    Yn      ")
-print("------------------------------------")
-while (x0 < xt) or (nf < ni):
-    y_prime_func = lambdify((x, y), y_prime)
-    y0 += h * y_prime_func(x0, y0)
-    x0 += h
-    i += 1
-    ni += 1
-    print(f" {i + 1}|   x = {x0}  |  y = {y0}  ")
+for step in range(1, n_steps + 1):
+    y0 += h * y_prime_func(x0, y0)  # Update y using Euler's formula
+    x0 += h                        # Update x
+    print(f"  {step:4d} | {x0:8.4f} | {y0:8.4f}")
+    if x0 >= target_x:
+        break

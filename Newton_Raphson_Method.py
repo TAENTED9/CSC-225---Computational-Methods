@@ -5,7 +5,8 @@ from sympy.parsing.sympy_parser import * # Import symbols for variable definitio
 # Define the function and its derivative
 x = symbols('x')  # Define the symbol x for symbolic computation
 print("\nNewton Raphson Method")  # Print method name
-f = parse_expr(input("\nEnter Function f(x) = "), transformations = (standard_transformations + (implicit_multiplication_application,)), local_dict = {"cos": cos, "sin": sin, "x": x})  # Get the function from user input
+user_input = input("\nEnter Function f(x) = ")
+f = parse_expr(user_input, transformations=(standard_transformations + (implicit_multiplication_application,)), local_dict={"cos": cos, "sin": sin, "exp": exp, "log": log, "sqrt": sqrt})  # Get the function from user input
 
 dfx = diff(f, x)  # Compute the derivative of the function with respect to x
 
